@@ -1,45 +1,136 @@
 @extends('layouts.app')
 @section('content')
-    <div class="box box-primary">
-        <div class="cox-header with-border">
-            <h3 class="box-title">create post</h3>
+
+
+    <style>
+
+        .thumb{
+
+            margin: 10px 5px 0 0;
+
+            width: 300px;
+
+        }
+
+    </style>
+
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="card" style="margin-top: 4%">
+
+
+
+
+                <div class="card-header bg-secondary dark bgsize-darken-4 white card-header">
+
+                    <h4 class="text-white">POST ADD</h4>
+
+                </div>
+
+                <div class="card-body">
+
+                    @if ($message = Session::get('success'))
+
+
+
+
+                        <div class="alert alert-success alert-block">
+
+
+
+
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+
+
+
+
+                            <strong>{{ $message }}</strong>
+
+
+
+
+                        </div>
+
+                        <br>
+
+                    @endif
+
+                    <form id="file-upload-form" class="uploader" action="{{route('post.save')}}" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+
+                        @csrf
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Post title</label>
+                            <input type="text" class="form-control" placeholder="name" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Post text</label>
+                            <input type="text" class="form-control" placeholder="text" name="text">
+                        </div>
+                        <input type="file" id="file-input" onchange="loadPreview(this)" name="image[]"   multiple/>
+
+                        <span class="text-danger">{{ $errors->first('image') }}</span>
+
+                        <div id="thumb-output"></div>
+
+                        <br>
+
+                        <button type="submit" class="btn btn-success">Submit</button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
         </div>
-        <form method="post" enctype="multipart/form-data" action="{{route('post.save')}}">
-            <div class="box-body">
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Post title</label>
-                    <input type="text" class="form-control" placeholder="name" name="name">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Post text</label>
-                    <input type="text" class="form-control" placeholder="text" name="text">
-                </div>
-                <div class="form-group row">
-                    <label for="image" class="col-md-4 col-form-label text-md-right">{{ __('Image') }}</label>
 
-                    <div class="col-md-6">
-                        <input id="image" type="file" class="form-control @error('image') is-invalid @enderror" name="image" value="{{ old('image') }}" required autocomplete="user_image" autofocus>
-
-                        @error('image')
-                        <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                        @enderror
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Post Tags</label>
-                    <select name="tags[]" id="" multiple>
-                        @foreach($tags as $tag)
-                            <option value="{{$tag->id}}">{{$tag->tag}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <input type="hidden" name="_token" id="csrf_token" value="{{csrf_token()}}">
-            <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Save</button>
-            </div>
-        </form>
     </div>
+
+
+
+
+    <script>
+
+
+
+
+        function loadPreview(input){
+
+            var data = $(input)[0].files;
+
+
+
+            $.each(data, function(index, file){
+
+                if(/(\.|\/)(gif|jpe?g|png)$/i.test(file.type)){
+
+                    var fRead = new FileReader();
+
+                    fRead.onload = (function(file){
+
+                        return function(e) {
+
+                            var img = $('<img/>').addClass('thumb').attr('src', e.target.result);
+
+                            $('#thumb-output').append(img);
+
+                        };
+
+                    })(file);
+
+                    fRead.readAsDataURL(file);
+
+                }
+
+            });
+
+        }
+
+
+
+
+    </script>
 @endsection

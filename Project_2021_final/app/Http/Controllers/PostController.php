@@ -37,19 +37,19 @@ class PostController extends Controller
         ]);
 
         $post=new Post($request->all());
-
-        if ($request->hasFile('image')){
-            $file=$request->file('image');
-            $extension=$file->getClientOriginalExtension();
-            $filename=time().'.'.$extension;
-            $file->move('uploads/post/', $filename);
-            $post->image=$filename;
-        }else{
-            return $request;
-            $post->image='';
-        }
         $user=Auth::user();
         $post->user_id=$user->id;
+
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $files) {
+                $destinationPath = 'uploads/post/';
+                $file_name = time().rand(1,100) . "." . $files->getClientOriginalExtension();
+                $files->move($destinationPath, $file_name);
+                $data1[] = $file_name;
+            }
+        }
+        $post->image=json_encode($data1);
+
         $data=[
             "text"=>'პოსტი სათაურით'.'  '.$post->name.'  '.'დაემატა საიტზე'
         ];

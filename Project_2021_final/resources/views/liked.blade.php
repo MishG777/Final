@@ -29,7 +29,11 @@
                             <button type="submit" class="fa fa-trash btn-delete" url="{{route('post.delete',$post->id)}}"></button>
                         </div><br>
                         <div>
-                            <img src="{{asset('uploads/post/'.$post->image)}}" alt="">
+                            <a  href="{{route('post.show', $post->id)}}" >
+                                @foreach(@json_decode($post->image, true) as $img)
+                                    <img class="h-25 w-25" src=" {{asset('uploads/post/'.$img)}}" alt="">
+                                @endforeach
+                            </a>
                         </div>
                     </div>
 
